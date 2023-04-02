@@ -36,7 +36,7 @@ class HDF5SubVolume(data.Dataset):
             for i in range(self.z_slices[0], self.z_slices[1] + 1):
                 slice = data[f'{i}']
                 patches.append(slice[x - self.shape_x // 2 + 1: x + self.shape_x // 2 + 1,
-                                          y - self.shape_y // 2 + 1: y + self.shape_y // 2 + 1])
+                                     y - self.shape_y // 2 + 1: y + self.shape_y // 2 + 1])
 
         patches = torch.from_numpy(np.stack(patches) / 255)
         return patches
