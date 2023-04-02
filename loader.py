@@ -1,25 +1,26 @@
 import argparse
 import os
 import random
-import torch
 import numpy as np
+import torch
 import torch.utils.data as data
 from tqdm import tqdm
 import h5py
 
 
 class HDF5SubVolume(data.Dataset):
-    def __init__(self, params) -> None:
+    def __init__(self, params, mode="train") -> None:
         super(HDF5SubVolume, self).__init__()
 
         self.params = params
+        fragment_names = range(1, 4) if mode == "train" else ["a", "b"]
         # Paths of the hdf5 fragments
-        self.data_paths = {f"{i}": os.path.join("data", "train", f"{str(i)}", "fragment.h5")
-                           for i in range(1, 4)}
+        self.data_paths = {f"{idx}": os.path.join("data", mode, f"{str(idx)}", "fragment.h5")
+                           for idx in fragment_names}
 
         self.shape_x = params.shape_x
         self.shape_y = params.shape_y
-        self.z_slices = (20, 48)
+        self.z_slices = (20, 44)
 
     def __len__(self):
         return self.params.epoch_size
@@ -47,8 +48,8 @@ if __name__ == "__main__":
     parser.add_argument("--epoch_size", type=int, default=200000)
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--num_workers", type=int, default=16)
-    parser.add_argument("--shape_x", type=int, default=256)
-    parser.add_argument("--shape_y", type=int, default=256)
+    parser.add_argument("--shape_x", type=int, default=64)
+    parser.add_argument("--shape_y", type=int, default=64)
     params = parser.parse_args()
 
     dataset = HDF5SubVolume(params)
